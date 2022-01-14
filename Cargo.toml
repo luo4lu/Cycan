@@ -1,0 +1,16 @@
+[workspace]
+members = [
+	"frame/evm/precompile/call-vm",
+	"frame/vm-bridge",
+	"frame/rgrandpa",
+	"frame/esbind",
+	"node",
+	"runtime/phoenix",
+]
+exclude = [
+	"vendor",
+]
+
+[profile.release]
+panic = "unwind"
+
