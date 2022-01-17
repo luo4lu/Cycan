@@ -126,7 +126,7 @@ pub const MAXIMUM_BLOCK_WEIGHT: Weight = 2 * WEIGHT_PER_SECOND;
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: create_runtime_str!("cycan"),
-	impl_name: create_runtime_str!("cycan-cycan"),
+	impl_name: create_runtime_str!("cycan"),
 	authoring_version: 1,
 	spec_version: 1,
 	impl_version: 1,

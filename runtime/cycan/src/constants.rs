@@ -22,9 +22,9 @@ pub mod currency {
     use crate::common::Balance;
 
 	pub const UNITS: Balance = 1_000_000_000_000_000_000;
-	pub const DOLLARS: Balance = UNITS; // 10_000_000_000
-	pub const CENTS: Balance = DOLLARS / 100; // 100_000_000
-	pub const MILLICENTS: Balance = CENTS / 1_000; // 100_000
+	pub const DOLLARS: Balance = UNITS; // 1_000_000_000_000_000_000
+	pub const CENTS: Balance = DOLLARS / 100; // 1_0_000_000_000_000_000
+	pub const MILLICENTS: Balance = CENTS / 1_000; // 1_0_000_000_000_000
 
 	pub const fn deposit(items: u32, bytes: u32) -> Balance {
 		items as Balance * 15 * CENTS + (bytes as Balance) * 6 * CENTS
