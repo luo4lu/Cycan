@@ -1,6 +1,6 @@
 use cycan_runtime::{
 	AccountId, BabeConfig, BalancesConfig, EVMConfig, EthereumConfig, GenesisConfig, GrandpaConfig,
-	Signature, SudoConfig, SystemConfig, WASM_BINARY,StakerStatus,{opaque::SessionKeys as SessionKeys}, DOLLARS, SessionConfig, StakingConfig,
+	Signature, SudoConfig, SystemConfig,StakerStatus,{opaque::SessionKeys as SessionKeys}, DOLLARS, SessionConfig, StakingConfig,
 	ContractsConfig, ImOnlineConfig,wasm_binary_unwrap,IndicesConfig,CouncilConfig,DemocracyConfig,ElectionsConfig,TechnicalCommitteeConfig,RGrandpaConfig,
 	AuthorityDiscoveryConfig
 };
@@ -13,7 +13,6 @@ use std::{collections::BTreeMap, str::FromStr};
 use sp_runtime::{Perbill};
 use pallet_rgrandpa::AuthorityId as RGrandpaId;
 use pallet_im_online::sr25519::{AuthorityId as ImOnlineId};
-use sc_cli::NodeKeyType::Ed25519;
 
 use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
 // The URL for the telemetry server.
@@ -92,7 +91,6 @@ pub fn my_stash_and_control_keys_from_seed(index:&str,seed: &str) -> (AccountId,
 	)
 }
 pub fn development_config() -> Result<ChainSpec, String> {
-	let wasm_binary = WASM_BINARY.ok_or("Development wasm binary not available".to_string())?;
 
 	Ok(ChainSpec::from_genesis(
 		// Name
@@ -102,7 +100,6 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		ChainType::Development,
 		move || {
 			testnet_genesis(
-				wasm_binary,
 				// Initial PoA authorities
 				vec![authority_keys_from_seed("Alice")],
 				// Sudo account
@@ -131,7 +128,6 @@ pub fn development_config() -> Result<ChainSpec, String> {
 }
 
 pub fn local_testnet_config() -> Result<ChainSpec, String> {
-	let wasm_binary = WASM_BINARY.ok_or("Development wasm binary not available".to_string())?;
 
 	Ok(ChainSpec::from_genesis(
 		// Name
@@ -141,7 +137,6 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 		ChainType::Local,
 		move || {
 			testnet_genesis(
-				wasm_binary,
 				// Initial PoA authorities
 				vec![
 					authority_keys_from_seed("Alice"),
@@ -180,7 +175,6 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 	))
 }
 pub fn beta_config() -> Result<ChainSpec, String> {
-	let wasm_binary = WASM_BINARY.ok_or("Livenet wasm binary not available".to_string())?;
 
 	Ok(ChainSpec::from_genesis(
 		// Name
@@ -190,7 +184,6 @@ pub fn beta_config() -> Result<ChainSpec, String> {
 		ChainType::Live,
 		move || {
 			beta_genesis(
-				wasm_binary,
 				// Initial PoA authorities
 				vec![
 					 my_authority_keys_from_seed("1","conduct enforce source exhibit inform rescue exercise rubber jeans swarm crisp wealth"),
@@ -246,7 +239,6 @@ pub fn beta_config() -> Result<ChainSpec, String> {
 }
 
 fn beta_genesis(
-	wasm_binary: &[u8],
 	initial_authorities: Vec<(AccountId, AccountId, BabeId, GrandpaId, RGrandpaId, ImOnlineId, AuthorityDiscoveryId)>,
 	root_key: AccountId,
 	endowed_accounts: Vec<AccountId>,
@@ -258,8 +250,6 @@ fn beta_genesis(
 	const ENDOWMENT: u128 = 10_000_000 * DOLLARS;
 	const STASH: u128 = ENDOWMENT / 1000;
 	let num_nominate_accounts = nominate_accounts.len();
-	let num_endowed_accounts = endowed_accounts.len();
-	let mut tem_count = 0;
 	GenesisConfig {
 		frame_system: Some(SystemConfig {
 			// Add Wasm runtime to storage.
@@ -417,7 +407,6 @@ fn beta_genesis(
 
 /// Configure initial storage state for FRAME modules.
 fn testnet_genesis(
-	wasm_binary: &[u8],
 	initial_authorities: Vec<(AccountId, AccountId, BabeId, GrandpaId, RGrandpaId, ImOnlineId, AuthorityDiscoveryId)>,
 	root_key: AccountId,
 	endowed_accounts: Vec<AccountId>,

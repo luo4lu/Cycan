@@ -57,7 +57,8 @@ frame-benchmarking = { version = "3.0.0" }
 fc-consensus = {version = "2.0.0-dev", path = "../vendor/frontier/client/consensus" }
 fp-consensus = {version = "1.0.0", path = "../vendor/frontier/primitives/consensus" }
 
-cycan-runtime = { path = "../runtime/phoenix" }
+cycan-runtime = { path = "../runtime/cycan" }
+phoenix-runtime = { path = "../runtime/phoenix" }
 
 fc-rpc = {version = "2.0.0-dev", path = "../vendor/frontier/client/rpc" }
 fp-rpc = {version = "2.1.0",  path = "../vendor/frontier/primitives/rpc" }

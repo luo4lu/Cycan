@@ -125,8 +125,8 @@ pub const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 pub const MAXIMUM_BLOCK_WEIGHT: Weight = 2 * WEIGHT_PER_SECOND;
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("phoenix"),
-	impl_name: create_runtime_str!("cycan-phoenix"),
+	spec_name: create_runtime_str!("cycan"),
+	impl_name: create_runtime_str!("cycan-cycan"),
 	authoring_version: 1,
 	spec_version: 1,
 	impl_version: 1,

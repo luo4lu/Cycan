@@ -7,7 +7,6 @@ use sp_runtime::AccountId32;
 use pallet_evm::AddressMapping;
 use frame_support::{
 	traits::{IsType},
-	weights::{DispatchClass, GetDispatchInfo, Weight, Pays},
 };
 use sp_std::{vec::Vec};
 use sha3::{Digest, Keccak256};

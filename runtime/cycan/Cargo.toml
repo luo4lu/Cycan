@@ -1,5 +1,5 @@
 [package]
-name = "phoenix-runtime"
+name = "cycan-runtime"
 version = "0.1.0"
 authors = ["Cycan Technologies"]
 edition = "2018"

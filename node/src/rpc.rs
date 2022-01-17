@@ -22,6 +22,7 @@ use sp_runtime::traits::BlakeTwo256;
 use sp_transaction_pool::TransactionPool;
 use std::collections::BTreeMap;
 use pallet_contracts_rpc::{Contracts, ContractsApi};
+#[allow(dead_code)]
 /// Light client extra dependencies.
 pub struct LightDeps<C, F, P> {
 	/// The client instance to use.
@@ -188,7 +189,7 @@ where
 	);
 	io
 }
-
+#[allow(dead_code)]
 /// Instantiate all Light RPC extensions.
 pub fn create_light<C, P, M, F>(deps: LightDeps<C, F, P>) -> jsonrpc_core::IoHandler<M>
 where

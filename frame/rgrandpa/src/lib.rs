@@ -5,12 +5,12 @@
 /// <https://substrate.dev/docs/en/knowledgebase/runtime/frame>
 
 pub use pallet::*;
-use frame_support::traits::{ValidatorSet,OneSessionHandler};
+use frame_support::traits::{OneSessionHandler};
 use sp_std::vec::Vec;
 use sp_core::crypto::KeyTypeId;
 use pallet_staking;
 use pallet_babe;
-use sp_core::{U256, crypto::Public};
+use sp_core::{U256};
 use pallet_grandpa;
 use pallet_grandpa::AuthorityList;
 use sp_runtime::{Percent, traits::Zero};
@@ -31,9 +31,7 @@ pub mod crypto {
 	use super::KEY_TYPE;
 	use sp_runtime::{
 		app_crypto::{app_crypto, sr25519},
-		traits::Verify,
 	};
-	use sp_core::sr25519::Signature as Sr25519Signature;
 	app_crypto!(sr25519, KEY_TYPE);
 }
 
@@ -45,8 +43,7 @@ pub mod pallet {
 	use super::*;
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
-	use sp_std::prelude::*;
-	use codec::{Decode, Encode, EncodeLike};
+	use codec::{ EncodeLike};
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -64,7 +61,7 @@ pub mod pallet {
 	// The pallet's runtime storage items.
 	// https://substrate.dev/docs/en/knowledgebase/runtime/storage
 	#[pallet::storage]
-	#[pallet::getter(fn cycle_confirmer_num)]
+	#[pallet::getter(fn cycle_percent)]
 	// percent of grandpa consensus count
 	pub type CyclePercent<T> = StorageValue<_, u8, ValueQuery>;
 
@@ -74,7 +71,7 @@ pub mod pallet {
 	pub type CycleBlockNum<T:Config> = StorageValue<_, T::BlockNumber, ValueQuery>;
 
 	#[pallet::storage]
-	#[pallet::getter(fn nex_change_at)]
+	#[pallet::getter(fn next_change_at)]
 	// block number of next change
 	pub type NextChangeAt<T:Config> = StorageValue<_, T::BlockNumber, ValueQuery>;
 
@@ -104,11 +101,11 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         fn on_initialize(n: T::BlockNumber) -> Weight{
-            let mut nextChangeAt = <NextChangeAt<T>>::get();
-            let cycleBlockNum = <CycleBlockNum<T>>::get();
-            if n == nextChangeAt && nextChangeAt!= Zero::zero() {
-                nextChangeAt += cycleBlockNum;
-                <NextChangeAt<T>>::put(nextChangeAt);
+            let mut t_next_change_at = <NextChangeAt<T>>::get();
+            let t_cycle_block_num = <CycleBlockNum<T>>::get();
+            if n == t_next_change_at && t_next_change_at!= Zero::zero() {
+				t_next_change_at += t_cycle_block_num;
+                <NextChangeAt<T>>::put(t_next_change_at);
                 //then set rgrandpa validator count
                 Self::set_random_validator_count();
 				10_000 + T::DbWeight::get().reads_writes(2, 1)
@@ -132,15 +129,15 @@ pub mod pallet {
 			// https://substrate.dev/docs/en/knowledgebase/runtime/origin
 			ensure_root(origin)?;
 			//parameter need valid
-			let mut min_num  = <pallet_staking::Module<T>>::minimum_validator_count();
+			let min_num  = <pallet_staking::Module<T>>::minimum_validator_count();
 			let mut org_num	= <pallet_staking::Module<T>>::validator_count();
 			org_num =  Percent::from_percent(percent as u8) * org_num;
 			if org_num >= min_num {
 				// Update storage.
 				<CyclePercent<T>>::put(percent);
 				<CycleBlockNum<T>>::put(bnum);
-				let nextChangeAt = <frame_system::Module<T>>::block_number() + bnum;
-				<NextChangeAt<T>>::put(nextChangeAt);
+				let t_next_change_at = <frame_system::Module<T>>::block_number() + bnum;
+				<NextChangeAt<T>>::put(t_next_change_at);
 				Self::deposit_event(Event::ParameterStored( percent, bnum));
 				// Return a successful DispatchResultWithPostInfo
 				Ok(().into())
@@ -184,9 +181,9 @@ impl<T: Config> Pallet<T>{
 
     pub fn set_random_validator_count() {
 
-        let minNum  = <pallet_staking::Module<T>>::minimum_validator_count();
+        let min_num  = <pallet_staking::Module<T>>::minimum_validator_count();
 
-		let orgNum	= <pallet_staking::Module<T>>::validator_count();
+		let org_num	= <pallet_staking::Module<T>>::validator_count();
 
 		let mut percent = <CyclePercent<T>>::get();
 
@@ -194,10 +191,10 @@ impl<T: Config> Pallet<T>{
 			percent = 100;
 		}
 
-        let mut confirmerNum = Percent::from_percent(percent as u8)* orgNum;
+        let mut confirmer_num = Percent::from_percent(percent as u8)* org_num;
 
-		if confirmerNum < minNum {
-			confirmerNum = minNum;
+		if confirmer_num < min_num {
+			confirmer_num = min_num;
 		}
 
         let randomness = <pallet_babe::Module<T>>::randomness();
@@ -208,21 +205,18 @@ impl<T: Config> Pallet<T>{
 
         let mut count = auth_list.iter().count();
 
-		if count < confirmerNum as usize {
+		if count < confirmer_num as usize {
 			return;
 		}
         let mut rand_auth:AuthorityList = Vec::new();
-        for i in 0..confirmerNum {
+        for _i in 0..confirmer_num {
             let j = (rand % U256::from(count)).as_u32() as usize;
             rand_auth.push(auth_list.get(j).unwrap().clone());
             auth_list.remove(j);
             count-=1;
         }
 
-        // for (auth,weight) in rand_auth.iter() {
-        //     log::info!("============={:?}->{:?}",auth, weight);
-        // }
-        <pallet_grandpa::Module<T>>::schedule_change(rand_auth, Zero::zero(), None);
+        <pallet_grandpa::Module<T>>::schedule_change(rand_auth, Zero::zero(), None).unwrap();
     }
 }
 
@@ -233,7 +227,7 @@ impl<T> OneSessionHandler<T::AccountId> for Module<T>
  where T: Config {
     type Key = AuthorityId;
 
-    fn on_genesis_session<'a, I: 'a>(validators: I)
+    fn on_genesis_session<'a, I: 'a>(_validators: I)
         where I: Iterator<Item=(&'a T::AccountId, AuthorityId)>
     {
 		let keys = <RNextAuthorities<T>>::get();
@@ -243,7 +237,7 @@ impl<T> OneSessionHandler<T::AccountId> for Module<T>
 		}
     }
 
-    fn on_new_session<'a, I: 'a>(changed: bool, validators: I, queued_validators: I)
+    fn on_new_session<'a, I: 'a>(changed: bool, _validators: I, _queued_validators: I)
         where I: Iterator<Item=(&'a T::AccountId, AuthorityId)>
     {
         if changed {
@@ -253,6 +247,6 @@ impl<T> OneSessionHandler<T::AccountId> for Module<T>
         }
     }
 
-    fn on_disabled(i: usize) {
+    fn on_disabled(_i: usize) {
     }
 }

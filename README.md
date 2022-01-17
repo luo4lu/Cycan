@@ -48,7 +48,7 @@ Once done, finish installing the support software:
 Get the source code:
 
 ```
-git clone --recurse-submodules https://github.com/CycanTech/Cycan.git
+git clone --recurse-submodules https://github.com/sulijia/Cycan.git
 ```
 
 Build the client by cloning this repository and running the following commands from the root directory of the repo:
@@ -156,7 +156,7 @@ ea8a1d99f96b7680419eaccaa40c73d61ac1c19801392f064255d49d93bc02e7
 
 ## License
 
-Cycan solo node is [GPL 3.0 licensed](https://github.com/sulijia/Cycan/blob/master/LICENSE).
+Cycan is [GPL 3.0 licensed](https://github.com/sulijia/Cycan/blob/master/LICENSE).
 
 
 

@@ -4,20 +4,16 @@ use fc_consensus::FrontierBlockImport;
 use fc_mapping_sync::{MappingSyncWorker, SyncStrategy};
 use fc_rpc::EthTask;
 use fc_rpc_core::types::{FilterPool, PendingTransactions};
-use cycan_runtime::{self, opaque::Block, RuntimeApi, SLOT_DURATION};
+use cycan_runtime::{self, opaque::Block, RuntimeApi};
 use futures::StreamExt;
 use sc_cli::SubstrateCli;
-use sc_client_api::{BlockchainEvents, ExecutorProvider, RemoteBackend};
+use sc_client_api::{BlockchainEvents, ExecutorProvider};
 use sc_executor::native_executor_instance;
 pub use sc_executor::NativeExecutor;
 use sc_finality_grandpa::SharedVoterState;
 use sc_service::{error::Error as ServiceError, BasePath, Configuration, TaskManager};
-use sc_telemetry::{ TelemetryWorker };
 use sp_core::U256;
-use sp_inherents::{InherentData, InherentDataProviders, InherentIdentifier, ProvideInherentData};
-use sp_timestamp::InherentError;
 use std::{
-	cell::RefCell,
 	collections::{BTreeMap, HashMap},
 	sync::{Arc, Mutex},
 	time::Duration,
@@ -211,7 +207,7 @@ pub fn new_full(mut config: Configuration, cli: &Cli) -> Result<TaskManager, Ser
 		})?;
 
 	// Channel for the rpc handler to communicate with the authorship task.
-	let (command_sink, commands_stream) = futures::channel::mpsc::channel(1000);
+	let (command_sink, _commands_stream) = futures::channel::mpsc::channel(1000);
 
 	if config.offchain_worker.enabled {
 		sc_service::build_offchain_workers(
@@ -398,14 +394,14 @@ pub fn new_full(mut config: Configuration, cli: &Cli) -> Result<TaskManager, Ser
 }
 
 
-pub fn new_light(config: Configuration) -> Result<TaskManager, ServiceError> {
+pub fn new_light(_config: Configuration) -> Result<TaskManager, ServiceError> {
 
-	let (client, backend, keystore_container, mut task_manager, on_demand) =
+	/*let (client, backend, keystore_container, mut task_manager, on_demand) =
 		sc_service::new_light_parts::<Block, RuntimeApi, Executor>(
 			&config,
 		)?;
 
-	/*let mut telemetry = telemetry.map(|(worker, telemetry)| {
+	let mut telemetry = telemetry.map(|(worker, telemetry)| {
 		task_manager.spawn_handle().spawn("telemetry", worker.run());
 		telemetry
 	});
@@ -486,7 +482,8 @@ pub fn new_light(config: Configuration) -> Result<TaskManager, ServiceError> {
 		telemetry: telemetry.as_mut(),
 	})?;
 
-	network_starter.start_network();*/
+	network_starter.start_network();
 
-	Ok(task_manager)
+	Ok(task_manager)*/
+	Err(sc_service::Error::Other("not impl!".to_string()))
 }

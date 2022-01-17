@@ -5,7 +5,7 @@ members = [
 	"frame/rgrandpa",
 	"frame/esbind",
 	"node",
-	"runtime/phoenix",
+	"runtime/cycan",
 ]
 exclude = [
 	"vendor",
