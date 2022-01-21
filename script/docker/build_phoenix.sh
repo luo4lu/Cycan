@@ -8,13 +8,13 @@ PROJECT_ROOT=`git rev-parse --show-toplevel`
 cd $PROJECT_ROOT
 
 # Find the current version from Cargo.toml
-VERSION=`grep "^version" ./node/cycan/Cargo.toml | egrep -o "([0-9\.]+)"`
+VERSION=`grep "^version" ./node/phoenix/Cargo.toml | egrep -o "([0-9\.]+)"`
 GITUSER=cycan
-GITREPO=cycan
+GITREPO=phoenix
 
 # Build the image
 echo "Building ${GITUSER}/${GITREPO}:latest docker image, hang on!"
-time docker build -f ./script/docker/cycan_builder.Dockerfile -t ${GITUSER}/${GITREPO}:latest .
+time docker build -f ./script/docker/cycan_builder_phoenix.Dockerfile -t ${GITUSER}/${GITREPO}:latest .
 docker tag ${GITUSER}/${GITREPO}:latest ${GITUSER}/${GITREPO}:v${VERSION}
 
 # Show the list of available images for this repo
