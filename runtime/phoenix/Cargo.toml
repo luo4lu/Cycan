@@ -1,6 +1,6 @@
 [package]
 name = "phoenix-runtime"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Cycan Technologies"]
 edition = "2018"
 homepage = "https://cycan.network/"
